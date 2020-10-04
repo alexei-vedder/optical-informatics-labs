@@ -51,6 +51,7 @@
 		"no-irregular-whitespace": false,
 		"no-magic-numbers": false,
 		"no-parameter-reassignment": true,
+		"no-shadowed-variable": false,
 		"no-switch-case-fall-through": true,
 		"no-unused-variable": true,
 		"object-literal-sort-keys": false,

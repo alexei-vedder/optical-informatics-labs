@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import functionPlot from "function-plot";
-import {abs} from "mathjs";
 import {tabulateRange} from "../math-fns";
-import {a, b, f, hKsi, hX, p, q} from "./data";
+import {a, b, hKsi, hX, inputAmplitude, inputPhase, outputAmplitude, outputPhase, p, q} from "./lab1.data";
 
 @Component({
 	selector: 'lab1',
@@ -22,31 +21,47 @@ export class Lab1Component implements OnInit {
 			xAxis: {domain: [a, b]},
 			yAxis: {domain: [-0.5, 2]},
 			data: [{
-				points: x.map(xk => [xk, abs(f(xk))]),
+				points: x.map(xk => [xk, inputAmplitude(xk)]),
 				fnType: 'points',
 				graphType: 'polyline'
 			}]
 		});
 
-		/*functionPlot({
-			target: '#plot',
+		functionPlot({
+			target: "#input-phase-plot",
+			grid: true,
+			xAxis: {domain: [a, b]},
+			yAxis: {domain: [-2, 2]},
 			data: [{
-				fn: 'x^2'
+				points: x.map(xk => [xk, inputPhase(xk)]),
+				fnType: 'points',
+				graphType: 'polyline'
 			}]
 		});
 
 		functionPlot({
-			target: '#plot',
+			target: "#output-amplitude-plot",
+			grid: true,
+			xAxis: {domain: [p, q]},
+			yAxis: {domain: [-2, 2]},
 			data: [{
-				fn: 'x^2'
+				points: ksi.map(ksil => [ksil, outputAmplitude(ksil, x)]),
+				fnType: 'points',
+				graphType: 'polyline'
 			}]
 		});
 
 		functionPlot({
-			target: '#plot',
+			target: "#output-phase-plot",
+			grid: true,
+			xAxis: {domain: [p, q]},
+			yAxis: {domain: [-2, 2]},
 			data: [{
-				fn: 'x^2'
+				points: ksi.map(ksil => [ksil, outputPhase(ksil, x)]),
+				fnType: 'points',
+				graphType: 'polyline'
 			}]
-		});*/
+		});
+
 	}
 }
