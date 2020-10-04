@@ -38,25 +38,18 @@ export const q = 1;
 /**
  * number of sub-ranges within the ksi-range
  */
-export const m = 39;
+export const m = 1000;
 
 /**
  * input signal function
  */
-export const f: (x: number) => Complex = (x: number) => {
-	return exp(complex(0, beta * x));
-};
+export const f = (x: number) => exp(complex(0, beta * x));
 
 /**
  * core function
+ * if x === ksi then limit of this function equals 1
  */
-export const K: (x: number, ksi: number) => number = (x: number, ksi: number) => {
-	if ((x === -1 && ksi === -1) || (x === 1 && ksi === 1)) {
-		// because the limit equals 1 in this case
-		return 1;
-	}
-	return sin(pi * alpha * (x - ksi)) / (pi * (x - ksi));
-};
+export const K = (x: number, ksi: number) => (x === ksi) ? 1 : sin(pi * alpha * (x - ksi)) / (pi * (x - ksi));
 
 /**
  * a sub-range of the x-range
@@ -68,13 +61,9 @@ export const hX: number = (b - a) / n;
  */
 export const hKsi: number = (q - p) / m;
 
-export const inputAmplitude = (x: number) => {
-	return <number><unknown>abs(f(x));
-}
+export const inputAmplitude = (x: number) => <number><unknown>abs(f(x));
 
-export const inputPhase = (x: number) => {
-	return atan2(<number>im(f(x)), <number>re(f(x)));
-}
+export const inputPhase = (x: number) => atan2(<number>im(f(x)), <number>re(f(x)));
 
 export const F = (ksi: number, x: number[]) => {
 	let sum: Complex = complex(0, 0);
@@ -84,10 +73,6 @@ export const F = (ksi: number, x: number[]) => {
 	return sum;
 }
 
-export const outputAmplitude = (ksi: number, x: number[]) => {
-	return <number><unknown>abs(F(ksi, x))
-}
+export const outputAmplitude = (ksi: number, x: number[]) => <number><unknown>abs(F(ksi, x));
 
-export const outputPhase = (ksi: number, x: number[]) => {
-	return atan2(<number>im(F(ksi, x)), <number>re(F(ksi, x)));
-}
+export const outputPhase = (ksi: number, x: number[]) => atan2(<number>im(F(ksi, x)), <number>re(F(ksi, x)));

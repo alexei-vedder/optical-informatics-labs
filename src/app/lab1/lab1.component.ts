@@ -62,6 +62,5 @@ export class Lab1Component implements OnInit {
 				graphType: 'polyline'
 			}]
 		});
-
 	}
 }

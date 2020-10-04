@@ -6,4 +6,4 @@
 
 The crucial code of the lab is presented in the following files:
 * [lab1.component](src/app/lab1/lab1.component.ts)
-* [data](src/app/lab1/lab1.data.ts)
+* [lab1.data](src/app/lab1/lab1.data.ts)
