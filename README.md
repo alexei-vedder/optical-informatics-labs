@@ -1,19 +1,9 @@
-# Template of an Angular application with the configured "function-plot" library
+# Optical Informatics Labs
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.0.
+## Vedernikov Alexei, 6408-010302D
 
-<hr>
+### Lab 1
 
-IMPORTANT: for proper working of 
-"function-plot" there was added in "head" 
-of [index.html](src/index.html) the following script:
-
-```js
-if (global === undefined) {
-    var global = window;
-}
-```
-
-Without this script there is "Uncaught ReferenceError: global is not defined"
-
-<hr>
+The crucial code of the lab is presented in the following files:
+* [lab1.component](src/app/lab1/lab1.component.ts)
+* [data](src/app/lab1/data.ts)

@@ -26,13 +26,13 @@
 			}
 		],
 		"member-ordering": [
-			true,
+			false,
 			{
 				"order": [
 					"static-field",
 					"instance-field",
-					"static-method",
-					"instance-method"
+					"instance-method",
+					"static-method"
 				]
 			}
 		],
@@ -49,7 +49,7 @@
 		"no-duplicate-switch-case": true,
 		"no-inferrable-types": false,
 		"no-irregular-whitespace": false,
-		"no-magic-numbers": true,
+		"no-magic-numbers": false,
 		"no-parameter-reassignment": true,
 		"no-switch-case-fall-through": true,
 		"no-unused-variable": true,
@@ -102,11 +102,13 @@
 			"camelCase"
 		],
 		"enforce-component-selector": true,
+		"no-empty": false,
 		"no-input-rename": true,
 		"no-output-named-after-standard-event": true,
 		"no-output-on-prefix": true,
 		"no-output-rename": true,
 		"no-queries-parameter": true,
+		"no-trailing-whitespace": false,
 		"pipe-prefix": [
 			true
 		],
