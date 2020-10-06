@@ -3,13 +3,11 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from "@angular/router";
 
 import {AppComponent} from './app.component';
-import {LabChoiceComponent} from './lab-choice/lab-choice.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatTabsModule} from '@angular/material/tabs';
+
 
 const routes: Routes = [
-	{
-		path: "",
-		component: LabChoiceComponent
-	},
 	{
 		path: "*",
 		redirectTo: ""
@@ -22,12 +20,13 @@ const routes: Routes = [
 
 @NgModule({
 	declarations: [
-		AppComponent,
-		LabChoiceComponent
+		AppComponent
 	],
 	imports: [
 		BrowserModule,
-		RouterModule.forRoot(routes)
+		RouterModule.forRoot(routes),
+		BrowserAnimationsModule,
+		MatTabsModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]

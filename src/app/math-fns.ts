@@ -1,3 +1,8 @@
+export interface TabulatedFunction {
+	x: number[];
+	y: number[];
+}
+
 export function tabulateRange(from: number, to: number, step: number): number[] {
 	if (to < from) {
 		throw new Error("param 'from' should be less than param 'to'");
@@ -43,4 +48,26 @@ export function integrateBySimpson(func: (x: number) => number, from: number, to
 
 export function integrateByNewtonLeibniz(antiderivative: (x: number) => number, from: number, to: number): number {
 	return antiderivative(to) - antiderivative(from);
+}
+
+export function tabulateFunction(f: (x: number) => number, from: number, to: number, step: number): TabulatedFunction {
+	if (to < from) {
+		throw new Error("param 'from' should be less than param 'to'");
+	}
+	let xCurrent = from;
+	const tfunc: TabulatedFunction = {x: [], y: []};
+	while (xCurrent <= to + step / 2) {
+		tfunc.x.push(xCurrent);
+		tfunc.y.push(f(xCurrent));
+		xCurrent += step;
+	}
+	return tfunc;
+}
+
+export function transformToPoints(tf: TabulatedFunction): number[][] {
+	const points: number[][] = [];
+	for (let i = 0; i < tf.x.length; ++i) {
+		points.push([tf.x[i], tf.y[i]]);
+	}
+	return points;
 }
