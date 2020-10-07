@@ -63,11 +63,3 @@ export function tabulateFunction(f: (x: number) => number, from: number, to: num
 	}
 	return tfunc;
 }
-
-export function transformToPoints(tf: TabulatedFunction): number[][] {
-	const points: number[][] = [];
-	for (let i = 0; i < tf.x.length; ++i) {
-		points.push([tf.x[i], tf.y[i]]);
-	}
-	return points;
-}

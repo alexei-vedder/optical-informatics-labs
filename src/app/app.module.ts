@@ -5,6 +5,8 @@ import {RouterModule, Routes} from "@angular/router";
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MarkdownModule} from "ngx-markdown";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
 
 
 const routes: Routes = [
@@ -26,7 +28,9 @@ const routes: Routes = [
 		BrowserModule,
 		RouterModule.forRoot(routes),
 		BrowserAnimationsModule,
-		MatTabsModule
+		MatTabsModule,
+		MarkdownModule.forRoot({loader: HttpClient}),
+		HttpClientModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]

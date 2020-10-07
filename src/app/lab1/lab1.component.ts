@@ -1,109 +1,155 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {tabulateRange} from "../math-fns";
-import {a, b, hKsi, hX, inputAmplitude, inputPhase, K, outputAmplitude, outputPhase, p, q} from "./lab1.data";
+import {a, alpha, b, hKsi, hX, inputAmplitude, inputPhase, K, outputAmplitude, outputPhase, p, q} from "./lab1.data";
 import Plotly from 'plotly.js-dist'
+import {generate2dFrames, generateSliderSteps} from "../converter-fns";
 
 
 @Component({
 	selector: 'lab1',
 	template: `
-		<div class="plot-container">
-			<div id="input-amplitude-plot"></div>
-			<div id="input-phase-plot"></div>
-			<div id="output-amplitude-plot"></div>
-			<div id="output-phase-plot"></div>
-			<div id="core-3d-plot"></div>
-		</div>
-	`,
-	styles: [`
-		.plot-container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-	`]
+		<mat-tab-group mat-align-tabs="center">
+			<mat-tab label="Plots">
+				<div class="container">
+					<div id="input-amplitude-plot" class="plot-container"></div>
+					<div id="input-phase-plot" class="plot-container"></div>
+					<div id="output-amplitude-plot" class="plot-container"></div>
+					<div id="output-phase-plot" class="plot-container"></div>
+					<div id="core-3d-plot" class="plot-container"></div>
+				</div>
+			</mat-tab>
+			<mat-tab label="About">
+				<div class="container">
+					<markdown src="app/lab1/README.md"></markdown>
+				</div>
+			</mat-tab>
+		</mat-tab-group>
+	`
 })
-export class Lab1Component implements OnInit {
+export class Lab1Component implements OnInit, AfterViewInit {
 
 	private x: number[];
 	private ksi: number[];
+	private alphas: number[];
 
 	public ngOnInit(): void {
 		this.x = tabulateRange(a, b, hX);
 		this.ksi = tabulateRange(p, q, hKsi);
+		this.alphas = tabulateRange(alpha - 3, alpha + 7, 1);
+	}
+
+	public ngAfterViewInit() {
 		this.loadPlots();
 	}
 
 	private loadPlots() {
-		Plotly.newPlot("input-amplitude-plot", [{
-			x: this.x,
-			y: this.x.map(xk => inputAmplitude(xk)),
-			mode: 'lines',
-			type: 'scatter'
-		}], {
-			xaxis: {range: [a, b]},
-			yaxis: {range: [-2, 2]},
-			title: 'Input Amplitude'
-		}, {
-			scrollZoom: true
-		});
 
-		Plotly.newPlot("input-phase-plot", [{
-			x: this.x,
-			y: this.x.map(xk => inputPhase(xk)),
-			mode: 'lines',
-			type: 'scatter'
-		}], {
-			xaxis: {range: [a, b]},
-			yaxis: {range: [-2, 2]},
-			title: 'Input Phase'
-		}, {
-			scrollZoom: true
-		});
+		const alphaSliderSteps = generateSliderSteps(this.alphas);
 
-		Plotly.newPlot("output-amplitude-plot", [{
-			x: this.ksi,
-			y: this.ksi.map(ksil => outputAmplitude(ksil, this.x)),
-			mode: 'lines',
-			type: 'scatter'
-		}], {
-			xaxis: {range: [p, q]},
-			yaxis: {range: [-2, 2]},
-			title: 'Output Amplitude'
-		}, {
-			scrollZoom: true
-		});
-
-		Plotly.newPlot("output-phase-plot", [{
-			x: this.ksi,
-			y: this.ksi.map(ksil => outputPhase(ksil, this.x)),
-			mode: 'lines',
-			type: 'scatter'
-		}], {
-			xaxis: {range: [p, q]},
-			yaxis: {range: [-2, 2]},
-			title: 'Output Phase'
-		}, {
-			scrollZoom: true
-		});
-
-		/* less complex but long-written way to get points for the 3d core plot:
-			const core3dPlotData = [];
-			for (const xk of this.x) {
-				const lastArray = []
-				for (const ksil of this.ksi) {
-					lastArray.push(K(xk, ksil));
-				}
-				core3dPlotData.push(lastArray);
+		Plotly.newPlot("input-amplitude-plot", {
+			data: [{
+				x: this.x,
+				y: this.x.map(xk => inputAmplitude(xk)),
+				mode: 'lines',
+				type: 'scatter'
+			}],
+			layout: {
+				xaxis: {range: [a, b]},
+				yaxis: {range: [-2, 2]},
+				title: 'Input Amplitude'
+			},
+			config: {
+				scrollZoom: true
 			}
-		 */
-		Plotly.newPlot("core-3d-plot", [{
-			z: this.x.map(xk => this.ksi.map(ksil => K(xk, ksil))),
-			type: "surface"
-		}], {
-			title: 'Core'
-		}, {
-			scrollZoom: true
+		});
+
+
+		Plotly.newPlot("input-phase-plot", {
+			data: [{
+				x: this.x,
+				y: this.x.map(xk => inputPhase(xk)),
+				mode: 'lines',
+				type: 'scatter'
+			}],
+			layout: {
+				xaxis: {range: [a, b]},
+				yaxis: {range: [-2, 2]},
+				title: 'Input Phase'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		const outputAmplitudeFrames =
+			generate2dFrames(this.alphas, alpha => this.ksi.map(ksil => outputAmplitude(ksil, this.x, alpha)));
+
+		Plotly.newPlot("output-amplitude-plot", {
+			data: [{
+				x: this.ksi,
+				y: this.ksi.map(ksil => outputAmplitude(ksil, this.x)),
+				mode: 'lines',
+				type: 'scatter'
+			}],
+			layout: {
+				xaxis: {range: [p, q]},
+				yaxis: {range: [-2, 2]},
+				title: 'Output Amplitude',
+				sliders: [{
+					currentvalue: {
+						prefix: 'alpha = '
+					},
+					active: 3,
+					steps: alphaSliderSteps
+				}]
+			},
+			frames: outputAmplitudeFrames,
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		const outputPhaseFrames =
+			generate2dFrames(this.alphas, alpha => this.ksi.map(ksil => outputPhase(ksil, this.x, alpha)))
+
+		Plotly.newPlot("output-phase-plot", {
+			data: [{
+				x: this.ksi,
+				y: this.ksi.map(ksil => outputPhase(ksil, this.x)),
+				mode: 'lines',
+				type: 'scatter'
+			}],
+			layout: {
+				xaxis: {range: [p, q]},
+				yaxis: {range: [-2, 2]},
+				title: 'Output Phase',
+				sliders: [{
+					currentvalue: {
+						prefix: 'alpha = '
+					},
+					active: 3,
+					steps: alphaSliderSteps
+				}, {
+					currentvalue: "p"
+				}]
+			},
+			frames: outputPhaseFrames,
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("core-3d-plot", {
+			data: [{
+				z: this.x.map(xk => this.ksi.map(ksil => K(xk, ksil))),
+				type: "surface"
+			}],
+			layout: {
+				title: 'Core'
+			},
+			config: {
+				scrollZoom: true
+			}
 		});
 	}
 }

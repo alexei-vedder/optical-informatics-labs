@@ -6,18 +6,16 @@ import {Router} from "@angular/router";
 	template: `
 		<nav mat-tab-nav-bar mat-align-tabs="center">
 			<a class="tab" mat-tab-link
-			   *ngFor="let link of navLinks"
-			   [routerLink]="link.link"
-			   routerLinkActive #rla="routerLinkActive"
-			   [active]="rla.isActive">
-				{{link.label}}
+			   *ngFor="let tab of tabs"
+			   [routerLink]="tab.link">
+				{{tab.label}}
 			</a>
 		</nav>
 		<router-outlet></router-outlet>
 	`
 })
 export class AppComponent implements OnInit {
-	public readonly navLinks = [
+	public readonly tabs = [
 		{
 			label: 'Lab 1',
 			link: './lab1',
@@ -25,14 +23,17 @@ export class AppComponent implements OnInit {
 		}
 	];
 
-	activeLinkIndex = -1;
-
 	constructor(private router: Router) {
 	}
 
 	ngOnInit() {
-		this.router.events.subscribe((res) => {
-			this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
-		});
+	}
+
+	onLoad($event: string) {
+
+	}
+
+	onError($event: string) {
+		console.error("error during markdown loading")
 	}
 }
