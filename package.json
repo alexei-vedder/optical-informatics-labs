@@ -1,6 +1,6 @@
 {
-  "name": "angular-function-plot-template",
-  "version": "0.0.0",
+  "name": "optical-informatics-labs",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",
