@@ -23,7 +23,7 @@ export const b = 1;
 /**
  * number of sub-ranges within the x-range
  */
-export const n = 100;
+export const n = 1000;
 
 /**
  * left border of the ksi-range
@@ -38,7 +38,7 @@ export const q = 1;
 /**
  * number of sub-ranges within the ksi-range
  */
-export const m = 100;
+export const m = 1000;
 
 /**
  * input signal function

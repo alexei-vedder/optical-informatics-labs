@@ -54,8 +54,14 @@ export class Lab1Component implements OnInit, AfterViewInit {
 				type: 'scatter'
 			}],
 			layout: {
-				xaxis: {range: [a, b]},
-				yaxis: {range: [-2, 2]},
+				xaxis: {
+					title: "x",
+					range: [a, b]
+				},
+				yaxis: {
+					title: "abs(f(x))",
+					range: [-2, 2]
+				},
 				title: 'Input Amplitude'
 			},
 			config: {
@@ -72,8 +78,14 @@ export class Lab1Component implements OnInit, AfterViewInit {
 				type: 'scatter'
 			}],
 			layout: {
-				xaxis: {range: [a, b]},
-				yaxis: {range: [-2, 2]},
+				xaxis: {
+					title: "x",
+					range: [a, b]
+				},
+				yaxis: {
+					title: "atan2(im(f(x)), re(f(x)))",
+					range: [-2, 2]
+				},
 				title: 'Input Phase'
 			},
 			config: {
@@ -92,8 +104,14 @@ export class Lab1Component implements OnInit, AfterViewInit {
 				type: 'scatter'
 			}],
 			layout: {
-				xaxis: {range: [p, q]},
-				yaxis: {range: [-2, 2]},
+				xaxis: {
+					title: "ksi",
+					range: [p, q]
+				},
+				yaxis: {
+					title: "abs(F(ksi))",
+					range: [-2, 2]
+				},
 				title: 'Output Amplitude',
 				sliders: [{
 					currentvalue: {
@@ -120,8 +138,14 @@ export class Lab1Component implements OnInit, AfterViewInit {
 				type: 'scatter'
 			}],
 			layout: {
-				xaxis: {range: [p, q]},
-				yaxis: {range: [-2, 2]},
+				xaxis: {
+					title: "ksi",
+					range: [p, q]
+				},
+				yaxis: {
+					title: "atan2(im(F(ksi)), re(F(ksi)))",
+					range: [-2, 2]
+				},
 				title: 'Output Phase',
 				sliders: [{
 					currentvalue: {
