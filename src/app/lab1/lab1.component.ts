@@ -153,8 +153,6 @@ export class Lab1Component implements OnInit, AfterViewInit {
 					},
 					active: 3,
 					steps: alphaSliderSteps
-				}, {
-					currentvalue: "p"
 				}]
 			},
 			frames: outputPhaseFrames,
