@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {tabulateRange} from "../math-fns";
 import {a, alpha, b, hKsi, hX, inputAmplitude, inputPhase, K, outputAmplitude, outputPhase, p, q} from "./lab1.data";
-import Plotly from 'plotly.js-dist'
+import Plotly from 'plotly.js-dist';
 import {generate2dFrames, generateSliderSteps} from "../converter-fns";
 
 
