@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {tabulateRange} from "../math-fns";
-import {a, alpha, b, hKsi, hX, inputAmplitude, inputPhase, K, outputAmplitude, outputPhase, p, q} from "./lab1.data";
+import {a, alpha, b, hKsi, hX, inputAmplitude, inputPhase, outputAmplitude, outputPhase, p, q} from "./lab1.data";
 import Plotly from 'plotly.js-dist';
 import {generate2dFrames, generateSliderSteps} from "../converter-fns";
 
@@ -161,7 +161,7 @@ export class Lab1Component implements OnInit, AfterViewInit {
 			}
 		});
 
-		Plotly.newPlot("core-3d-plot", {
+		/*Plotly.newPlot("core-3d-plot", {
 			data: [{
 				z: this.x.map(xk => this.ksi.map(ksil => K(xk, ksil))),
 				type: "surface"
@@ -172,6 +172,6 @@ export class Lab1Component implements OnInit, AfterViewInit {
 			config: {
 				scrollZoom: true
 			}
-		});
+		});*/
 	}
 }

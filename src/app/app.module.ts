@@ -17,6 +17,10 @@ const routes: Routes = [
 	{
 		path: "lab1",
 		loadChildren: () => import("./lab1/lab1.module").then(m => m.Lab1Module)
+	},
+	{
+		path: "lab2",
+		loadChildren: () => import("./lab2/lab2.module").then(m => m.Lab2Module)
 	}
 ];
 
