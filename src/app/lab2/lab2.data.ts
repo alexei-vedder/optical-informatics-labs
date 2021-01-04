@@ -1,7 +1,8 @@
 import {rect} from "../math-fns";
-import {abs, atan2, exp, im, multiply, re, square} from 'mathjs';
+import {abs, atan2, divide, exp, im, multiply, pi, re, sin, square} from 'mathjs';
 
 export const customPlane = x => rect(x / 4);
+export const transformedCustomPlane = u => divide(sin(4 * pi * u), pi * u);
 
 export const N = 150;
 export const M = 2 ** 9;

@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {amplitudeOf, fourierIntegralFunction, integrateByTrapezia, phaseOf, tabulateFunction} from "../math-fns";
 import {opticalFourierTransform} from "../fourier-transform";
-import {a, amplitude, customPlane, gaussianBeam, h, M, N, phase} from "./lab2.data";
+import {a, amplitude, customPlane, gaussianBeam, h, M, phase, transformedCustomPlane} from "./lab2.data";
 import Plotly from 'plotly.js-dist';
-import {multiply, sqrt} from "mathjs";
 
 
 @Component({
@@ -136,7 +135,6 @@ export class Lab2Component implements OnInit {
 		const tNumTransformedBeamAmplitude = {
 			x: tTransformedBeam.x,
 			y: amplitudeOf(tNumTransformedBeam.y)
-				/*TODO fix this cheat*/ .map(val => multiply(val, sqrt(N ** 2 / (4 * a * M))))
 		}
 
 		const tNumTransformedBeamPhase = {
@@ -277,12 +275,28 @@ export class Lab2Component implements OnInit {
 		const tNumTransformedPlaneAmplitude = {
 			x: tTransformedPlane.x,
 			y: amplitudeOf(tNumTransformedPlane.y)
-				/*TODO fix this cheat*/ .map(val => multiply(val, sqrt(N ** 2 / (4 * a * M))))
 		}
 
 		const tNumTransformedPlanePhase = {
 			x: tTransformedPlane.x,
 			y: phaseOf(tNumTransformedPlane.y)
+		}
+
+		const tAnalyticallyTransformedPlane = tabulateFunction(
+			transformedCustomPlane,
+			tTransformedPlane.x[0],
+			tTransformedPlane.x[tTransformedPlane.x.length - 1],
+			2 * tTransformedPlane.x[tTransformedPlane.x.length - 1] / M
+		);
+
+		const tAnalyticallyTransformedPlaneAmplitude = {
+			x: tAnalyticallyTransformedPlane.x,
+			y: amplitudeOf(tAnalyticallyTransformedPlane.y)
+		}
+
+		const tAnalyticallyTransformedPlanePhase = {
+			x: tAnalyticallyTransformedPlane.x,
+			y: phaseOf(tAnalyticallyTransformedPlane.y)
 		}
 
 		Plotly.newPlot("transformed-plane-amplitude-plot-2", {
@@ -298,6 +312,12 @@ export class Lab2Component implements OnInit {
 				mode: 'lines',
 				type: 'scatter',
 				name: "Numerically Integrated"
+			}, {
+				x: tAnalyticallyTransformedPlaneAmplitude.x,
+				y: tAnalyticallyTransformedPlaneAmplitude.y,
+				mode: 'lines',
+				type: 'scatter',
+				name: "Analytically"
 			}],
 			layout: {
 				xaxis: {
@@ -328,6 +348,12 @@ export class Lab2Component implements OnInit {
 				mode: 'lines',
 				type: 'scatter',
 				name: "Numerically Integrated"
+			}, {
+				x: tAnalyticallyTransformedPlanePhase.x,
+				y: tAnalyticallyTransformedPlanePhase.y,
+				mode: 'lines',
+				type: 'scatter',
+				name: "Analytically"
 			}],
 			layout: {
 				xaxis: {

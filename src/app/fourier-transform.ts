@@ -1,4 +1,4 @@
-import {add, complex, Complex, multiply, subtract} from "mathjs";
+import {add, complex, Complex, multiply, sqrt, subtract} from "mathjs";
 import {tabulateRange} from "./math-fns";
 
 
@@ -95,23 +95,21 @@ function swapHalfs(values) {
 
 export function opticalFourierTransform(tf, M) {
 	const N = tf.y.length;
-	let a = tf.x[tf.x.length - 1];
-	let f = tf.y;
+	const a = tf.x[tf.x.length - 1];
+	const h = 1 / (2 * a);
+	const b = N ** 2 / (4 * a * M);
+
+	let f = tf.y.map(val => complex(val, 0));
 	f = addZeros(f, M);
 	f = swapHalfs(f);
-	let b = N / (4 * a);
-	let h = 2 * b / N;
 
-	let F: Complex[] = fastFourierTransform(f.map(val => complex(val, 0)))
-
+	let F: Complex[] = fastFourierTransform(f);
 	F = swapHalfs(F);
 	F = F.slice(Math.floor((M - N) / 2), Math.ceil(M - (M - N) / 2))
-		.map(val => <Complex>multiply(val, h));
-
-	const b_ = N ** 2 / (4 * a * M);
+		.map(val => <Complex>multiply(val, h / sqrt(b)))
 
 	return {
-		x: tabulateRange(-b_, b_, (2 * b_) / F.length),
+		x: tabulateRange(-b, b, (2 * b) / F.length),
 		y: F
 	}
 }

@@ -67,7 +67,7 @@ export function tabulateFunction(f: (x: number) => number, from: number, to: num
 	return tfunc;
 }
 
-export function rect(x: number): number {
+export const rect = (x: number) => {
 	if (abs(x) > 1 / 2)
 		return 0;
 	if (abs(x) === 1 / 2)
@@ -76,21 +76,12 @@ export function rect(x: number): number {
 		return 1;
 }
 
-// TODO get back to this short form
-// const fourierIntegralFunction = (f, u) => x => multiply(f(x), exp(<number>multiply(-2 * pi * x * u, complex(0, 1))));
+export const fourierIntegralFunction = (f, u) => x => multiply(f(x), exp(<number>multiply(-2 * pi * x * u, complex(0, 1))));
 
-export const fourierIntegralFunction = function(f, u) {
-	return function(x) {
-		const a1 = f(x);
-		const a2 = exp(<number>multiply(-2 * pi * x * u, complex(0, 1)));
-		return multiply(a1, a2);
-	}
-}
-
-export function amplitudeOf(values) {
+export function amplitudeOf(values: any[]): any[] {
 	return values.map(val => abs(val));
 }
 
-export function phaseOf(values) {
+export function phaseOf(values: any[]): any[] {
 	return values.map(val => atan2(<number>im(val), <number>re(val)));
 }
