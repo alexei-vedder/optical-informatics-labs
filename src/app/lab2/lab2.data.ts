@@ -1,7 +1,7 @@
 import {rect} from "../math-fns";
 import {abs, atan2, exp, im, multiply, re, square} from 'mathjs';
 
-export const func = x => rect(x / 4);
+export const customPlane = x => rect(x / 4);
 
 export const N = 150;
 export const M = 2 ** 9;

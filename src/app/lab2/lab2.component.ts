@@ -1,30 +1,67 @@
 import {Component, OnInit} from '@angular/core';
-import {amplitudeOf, integrateByTrapezia, phaseOf, tabulateFunction} from "../math-fns";
+import {amplitudeOf, fourierIntegralFunction, integrateByTrapezia, phaseOf, tabulateFunction} from "../math-fns";
 import {opticalFourierTransform} from "../fourier-transform";
-import {a, amplitude, gaussianBeam, h, M, N, phase} from "./lab2.data";
+import {a, amplitude, customPlane, gaussianBeam, h, M, N, phase} from "./lab2.data";
 import Plotly from 'plotly.js-dist';
-import {complex, exp, multiply, pi, sqrt} from "mathjs";
+import {multiply, sqrt} from "mathjs";
 
 
 @Component({
 	selector: 'lab2',
 	template: `
-		<div class="container">
-			<div id="beam-amplitude-plot-2" class="plot-container"></div>
-			<div id="beam-phase-plot-2" class="plot-container"></div>
-			<div id="transformed-beam-amplitude-plot-2" class="plot-container"></div>
-			<div id="transformed-beam-phase-plot-2" class="plot-container"></div>
-		</div>
+		<mat-tab-group [(selectedIndex)]="selectedTabIndex" mat-align-tabs="center">
+			<mat-tab label="Gaussian Beam">
+				<div class="container">
+					<div id="beam-amplitude-plot-2" class="plot-container"></div>
+					<div id="beam-phase-plot-2" class="plot-container"></div>
+
+					<div id="transformed-beam-amplitude-plot-2" class="plot-container"></div>
+					<div id="transformed-beam-phase-plot-2" class="plot-container"></div>
+				</div>
+
+			</mat-tab>
+			<mat-tab label="Custom Input Plane">
+				<div class="container">
+					<div id="plane-amplitude-plot-2" class="plot-container"></div>
+					<div id="plane-phase-plot-2" class="plot-container"></div>
+
+					<div id="transformed-plane-amplitude-plot-2" class="plot-container"></div>
+					<div id="transformed-plane-phase-plot-2" class="plot-container"></div>
+				</div>
+			</mat-tab>
+		</mat-tab-group>
+
 	`
 })
 export class Lab2Component implements OnInit {
+	private _selectedTabIndex;
 
-	constructor() {
+	get selectedTabIndex(): number {
+		return this._selectedTabIndex;
+	}
+
+	set selectedTabIndex(value: number) {
+		this._selectedTabIndex = value;
+		switch (value) {
+			case 0: {
+				setTimeout(() => {
+					this.drawGaussianBeam();
+					this.drawTransformedGaussianBeam();
+				});
+				break;
+			}
+			case 1: {
+				setTimeout(() => {
+					this.drawCustomPlane();
+					this.drawTransformedCustomPlane();
+				});
+				break;
+			}
+		}
 	}
 
 	ngOnInit(): void {
-		this.drawGaussianBeam();
-		this.drawTransformedGaussianBeam();
+		this.selectedTabIndex = 0;
 	}
 
 	drawGaussianBeam() {
@@ -79,7 +116,6 @@ export class Lab2Component implements OnInit {
 	}
 
 	drawTransformedGaussianBeam() {
-
 		const tTransformedBeam = opticalFourierTransform(tabulateFunction(gaussianBeam, -a, a, h), M);
 
 		const tTransformedBeamAmplitude = {
@@ -91,17 +127,6 @@ export class Lab2Component implements OnInit {
 			x: tTransformedBeam.x,
 			y: phaseOf(tTransformedBeam.y)
 		};
-
-		// TODO get back to this short form
-		// const fourierIntegralFunction = (f, u) => x => multiply(f(x), exp(<number>multiply(-2 * pi * x * u, complex(0, 1))));
-
-		const fourierIntegralFunction = function(f, u) {
-			return function(x) {
-				const a1 = f(x);
-				const a2 = exp(<number>multiply(-2 * pi * x * u, complex(0, 1)));
-				return multiply(a1, a2);
-			}
-		}
 
 		const tNumTransformedBeam = {
 			x: tTransformedBeam.x,
@@ -124,12 +149,14 @@ export class Lab2Component implements OnInit {
 				x: tTransformedBeamAmplitude.x,
 				y: tTransformedBeamAmplitude.y,
 				mode: 'lines',
-				type: 'scatter'
+				type: 'scatter',
+				name: "Fouriered"
 			}, {
 				x: tNumTransformedBeamAmplitude.x,
 				y: tNumTransformedBeamAmplitude.y,
 				mode: 'lines',
-				type: 'scatter'
+				type: 'scatter',
+				name: "Numerically Integrated"
 			}],
 			layout: {
 				xaxis: {
@@ -152,12 +179,14 @@ export class Lab2Component implements OnInit {
 				x: tTransformedBeamPhase.x,
 				y: tTransformedBeamPhase.y,
 				mode: 'lines',
-				type: 'scatter'
+				type: 'scatter',
+				name: "Fouriered"
 			}, {
 				x: tNumTransformedBeamPhase.x,
 				y: tNumTransformedBeamPhase.y,
 				mode: 'lines',
-				type: 'scatter'
+				type: 'scatter',
+				name: "Numerically Integrated"
 			}],
 			layout: {
 				xaxis: {
@@ -176,4 +205,144 @@ export class Lab2Component implements OnInit {
 		});
 	}
 
+	drawCustomPlane() {
+		const tPlaneAmplitude = tabulateFunction(amplitude(customPlane), -a, a, h);
+		const tPlanePhase = tabulateFunction(phase(customPlane), -a, a, h);
+
+		Plotly.newPlot("plane-amplitude-plot-2", {
+			data: [{
+				x: tPlaneAmplitude.x,
+				y: tPlaneAmplitude.y,
+				mode: 'lines',
+				type: 'scatter'
+			}],
+			layout: {
+				xaxis: {
+					title: "x",
+					range: [-a, a]
+				},
+				yaxis: {
+					title: "abs(f(x))",
+					range: [-2, 2]
+				},
+				title: 'Input Plane Amplitude'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("plane-phase-plot-2", {
+			data: [{
+				x: tPlanePhase.x,
+				y: tPlanePhase.y,
+				mode: 'lines',
+				type: 'scatter'
+			}],
+			layout: {
+				xaxis: {
+					title: "x",
+					range: [-a, a]
+				},
+				yaxis: {
+					title: "atan2(im(f(x)), re(f(x)))",
+					range: [-2, 2]
+				},
+				title: 'Input Plane Phase'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+	}
+
+	drawTransformedCustomPlane() {
+		const tTransformedPlane = opticalFourierTransform(tabulateFunction(customPlane, -a, a, h), M);
+
+		const tTransformedPlaneAmplitude = {
+			x: tTransformedPlane.x,
+			y: amplitudeOf(tTransformedPlane.y)
+		};
+
+		const tTransformedPlanePhase = {
+			x: tTransformedPlane.x,
+			y: phaseOf(tTransformedPlane.y)
+		};
+
+		const tNumTransformedPlane = {
+			x: tTransformedPlane.x,
+			y: tTransformedPlane.x.map(x => integrateByTrapezia(fourierIntegralFunction(customPlane, x), -a, a, h))
+		}
+
+		const tNumTransformedPlaneAmplitude = {
+			x: tTransformedPlane.x,
+			y: amplitudeOf(tNumTransformedPlane.y)
+				/*TODO fix this cheat*/ .map(val => multiply(val, sqrt(N ** 2 / (4 * a * M))))
+		}
+
+		const tNumTransformedPlanePhase = {
+			x: tTransformedPlane.x,
+			y: phaseOf(tNumTransformedPlane.y)
+		}
+
+		Plotly.newPlot("transformed-plane-amplitude-plot-2", {
+			data: [{
+				x: tTransformedPlaneAmplitude.x,
+				y: tTransformedPlaneAmplitude.y,
+				mode: 'lines',
+				type: 'scatter',
+				name: "Fouriered"
+			}, {
+				x: tNumTransformedPlaneAmplitude.x,
+				y: tNumTransformedPlaneAmplitude.y,
+				mode: 'lines',
+				type: 'scatter',
+				name: "Numerically Integrated"
+			}],
+			layout: {
+				xaxis: {
+					title: "x",
+					range: [tTransformedPlane.x[0], tTransformedPlane.x[tTransformedPlane.x.length - 1]]
+				},
+				yaxis: {
+					title: "abs(f(x))",
+					range: [-2, 2]
+				},
+				title: 'Transformed Plane Amplitude'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("transformed-plane-phase-plot-2", {
+			data: [{
+				x: tTransformedPlanePhase.x,
+				y: tTransformedPlanePhase.y,
+				mode: 'lines',
+				type: 'scatter',
+				name: "Fouriered"
+			}, {
+				x: tNumTransformedPlanePhase.x,
+				y: tNumTransformedPlanePhase.y,
+				mode: 'lines',
+				type: 'scatter',
+				name: "Numerically Integrated"
+			}],
+			layout: {
+				xaxis: {
+					title: "x",
+					range: [tTransformedPlane.x[0], tTransformedPlane.x[tTransformedPlane.x.length - 1]]
+				},
+				yaxis: {
+					title: "atan2(im(f(x)), re(f(x)))",
+					range: [-2, 2]
+				},
+				title: 'Transformed Gaussian Beam Phase'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+	}
 }

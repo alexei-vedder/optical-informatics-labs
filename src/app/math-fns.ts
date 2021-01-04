@@ -1,4 +1,4 @@
-import {abs, add, atan2, Complex, im, multiply, re} from 'mathjs';
+import {abs, add, atan2, complex, Complex, exp, im, multiply, pi, re} from 'mathjs';
 
 export interface TabulatedFunction {
 	x: number[] | Complex[];
@@ -74,6 +74,17 @@ export function rect(x: number): number {
 		return 1 / 2;
 	if (abs(x) < 1 / 2)
 		return 1;
+}
+
+// TODO get back to this short form
+// const fourierIntegralFunction = (f, u) => x => multiply(f(x), exp(<number>multiply(-2 * pi * x * u, complex(0, 1))));
+
+export const fourierIntegralFunction = function(f, u) {
+	return function(x) {
+		const a1 = f(x);
+		const a2 = exp(<number>multiply(-2 * pi * x * u, complex(0, 1)));
+		return multiply(a1, a2);
+	}
 }
 
 export function amplitudeOf(values) {
