@@ -3,6 +3,7 @@ import {TabulatedFunction} from "./math-fns";
 export function convertTabulatedFunctionToPoints(tf: TabulatedFunction): [number, number][] {
 	const points: [number, number][] = [];
 	for (let i = 0; i < Math.min(tf.x.length, tf.y.length); ++i) {
+		// @ts-ignore
 		points.push([tf.x[i], tf.y[i]]);
 	}
 	return points;
@@ -35,4 +36,8 @@ export function generate2dFrames(args: number[], func: (arg: number) => number[]
 			}]
 		}
 	});
+}
+
+export function radianToDegree(radian: number): number {
+	return radian * (180 / Math.PI);
 }

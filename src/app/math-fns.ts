@@ -1,6 +1,8 @@
+import {abs, atan2, Complex, im, re} from 'mathjs';
+
 export interface TabulatedFunction {
-	x: number[];
-	y: number[];
+	x: number[] | Complex[];
+	y: number[] | Complex[];
 }
 
 export function tabulateRange(from: number, to: number, step: number): number[] {
@@ -55,11 +57,28 @@ export function tabulateFunction(f: (x: number) => number, from: number, to: num
 		throw new Error("param 'from' should be less than param 'to'");
 	}
 	let xCurrent = from;
-	const tfunc: TabulatedFunction = {x: [], y: []};
+	const tfunc = {x: [], y: []};
 	while (xCurrent <= to + step / 2) {
 		tfunc.x.push(xCurrent);
 		tfunc.y.push(f(xCurrent));
 		xCurrent += step;
 	}
 	return tfunc;
+}
+
+export function rect(x: number): number {
+	if (abs(x) > 1 / 2)
+		return 0;
+	if (abs(x) === 1 / 2)
+		return 1 / 2;
+	if (abs(x) < 1 / 2)
+		return 1;
+}
+
+export function amplitudeOf(values: Complex[]) {
+	return values.map(val => abs(val));
+}
+
+export function phaseOf(values: Complex[]) {
+	return values.map(val => atan2(<number>im(val), <number>re(val)));
 }
