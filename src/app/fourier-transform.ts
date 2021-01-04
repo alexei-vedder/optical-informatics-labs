@@ -1,4 +1,4 @@
-import {add, complex, Complex, divide, exp, multiply, pi, subtract} from "mathjs";
+import {add, complex, Complex, multiply, subtract} from "mathjs";
 import {tabulateRange} from "./math-fns";
 
 
@@ -84,20 +84,6 @@ export function fastFourierTransform(inputData: Complex[], inverse: boolean = fa
 	return output;
 }
 
-/**@deprecated*/
-export function discreteFourierTransform(input: Complex[]): Complex[] {
-	const N = input.length;
-	const output = [];
-	for (let k = 0; k <= N - 1; ++k) {
-		let Fk = complex(0, 0);
-		for (let n = 0; n <= N - 1; ++n) {
-			Fk = <Complex>add(Fk, exp(<Complex>divide(multiply(-2 * pi * k * n, complex(0, 1)), N)));
-		}
-		output.push(Fk);
-	}
-	return output;
-}
-
 function addZeros(values, M) {
 	const zeros = new Array(Math.floor((M - values.length) / 2)).fill(0);
 	return [...zeros, ...values, ...zeros]
@@ -107,7 +93,7 @@ function swapHalfs(values) {
 	return [...values.slice(values.length / 2), ...values.slice(0, values.length / 2)]
 }
 
-export function modifiedFastFourierTransform(tf, M) {
+export function opticalFourierTransform(tf, M) {
 	const N = tf.y.length;
 	let a = tf.x[tf.x.length - 1];
 	let f = tf.y;

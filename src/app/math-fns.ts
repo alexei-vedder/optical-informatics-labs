@@ -1,4 +1,4 @@
-import {abs, atan2, Complex, im, re} from 'mathjs';
+import {abs, add, atan2, Complex, im, multiply, re} from 'mathjs';
 
 export interface TabulatedFunction {
 	x: number[] | Complex[];
@@ -19,12 +19,13 @@ export function tabulateRange(from: number, to: number, step: number): number[] 
 	return tabulation;
 }
 
-export function integrateByTrapezia(func: (x: number) => number, from: number, to: number, step: number): number {
+export function integrateByTrapezia(func: (x: number) => number, from: number, to: number, step: number): number | Complex {
 	const x: number[] = tabulateRange(from, to, step);
-	let solution: number = 0;
+	let solution: number | Complex = 0;
 
 	for (let i = 0; i < x.length - 1; ++i) {
-		solution += (func(x[i]) + func(x[i + 1])) * (x[i + 1] - x[i]) / 2
+		const sumPart = multiply(add(func(x[i]), func(x[i + 1])), (x[i + 1] - x[i]) / 2);
+		solution = <number | Complex> add(solution, sumPart);
 	}
 
 	return solution;
@@ -75,10 +76,10 @@ export function rect(x: number): number {
 		return 1;
 }
 
-export function amplitudeOf(values: Complex[]) {
+export function amplitudeOf(values) {
 	return values.map(val => abs(val));
 }
 
-export function phaseOf(values: Complex[]) {
+export function phaseOf(values) {
 	return values.map(val => atan2(<number>im(val), <number>re(val)));
 }
