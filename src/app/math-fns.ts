@@ -1,4 +1,4 @@
-import {abs, add, atan2, complex, Complex, exp, im, multiply, pi, re} from 'mathjs';
+import {abs, add, atan2, complex, Complex, exp, im, multiply, pi, re, subtract} from 'mathjs';
 
 export interface TabulatedFunction {
 	x: number[] | Complex[];
@@ -54,23 +54,20 @@ export function integrateBySimpson(func: (x: number) => number, from: number, to
 	return (step / 3) * (func(x[0]) + 2 * series1 + 4 * series2 + func(x[n]));
 }
 
-export function integrateByNewtonLeibniz(antiderivative: (x: number) => number, from: number, to: number): number {
-	return antiderivative(to) - antiderivative(from);
+export function integrateByNewtonLeibniz(antiderivative: (x) => number | Complex, from: number, to: number): number | Complex {
+	return <number | Complex>subtract(antiderivative(to), antiderivative(from));
 }
 
-export function tabulateFunction(f: (x: number) => number, from: number, to: number, step: number): TabulatedFunction {
-
+export function tabulateFunction(f: (x) => number | Complex, from: number, to: number, step: number): TabulatedFunction {
 	const tf = {
 		x: tabulateRange(from, to, step),
 		y: []
 	};
-
 	tf.x.forEach(x => tf.y.push(f(x)));
-
 	return tf;
 }
 
-export function tabulate2dFunction(f: (x: number, y: number) => number, from: [number, number], to: [number, number], step: number): Tabulated2dFunction {
+export function tabulate2dFunction(f: (x, y) => number | Complex, from: [number, number], to: [number, number], step: number): Tabulated2dFunction {
 	if (to[0] < from[0] || to[1] < from[1]) {
 		throw new Error("param 'from' should be less than param 'to'");
 	}

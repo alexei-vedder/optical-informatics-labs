@@ -17,11 +17,13 @@ import {opticalFourierTransform, opticalFourierTransform2d} from "../fourier-tra
 import {
 	a,
 	customPlane,
+	customPlane2d,
 	gaussianBeam,
 	gaussianBeam2d,
 	h,
 	M,
 	transformedCustomPlane,
+	transformedCustomPlane2d,
 	transformedGaussianBeam2d
 } from "./lab2.data";
 import Plotly from 'plotly.js-dist';
@@ -170,41 +172,21 @@ export class Lab2Component implements OnInit {
 	drawTransformedGaussianBeam() {
 		const tTransformedBeam = opticalFourierTransform(tabulateFunction(gaussianBeam, -a, a, h), M);
 
-		const tTransformedBeamAmplitude = {
-			x: tTransformedBeam.x,
-			y: amplitudeOfTabulatedValues(tTransformedBeam.y)
-		};
-
-		const tTransformedBeamPhase = {
-			x: tTransformedBeam.x,
-			y: phaseOfTabulatedValues(tTransformedBeam.y)
-		};
-
 		const tNumTransformedBeam = {
 			x: tTransformedBeam.x,
 			y: tTransformedBeam.x.map(x => integrateByTrapezia(fourierIntegralFunction(gaussianBeam, x), -a, a, h))
 		}
 
-		const tNumTransformedBeamAmplitude = {
-			x: tTransformedBeam.x,
-			y: amplitudeOfTabulatedValues(tNumTransformedBeam.y)
-		}
-
-		const tNumTransformedBeamPhase = {
-			x: tTransformedBeam.x,
-			y: phaseOfTabulatedValues(tNumTransformedBeam.y)
-		}
-
 		Plotly.newPlot("transformed-beam-amplitude-plot-2", {
 			data: [{
-				x: tTransformedBeamAmplitude.x,
-				y: tTransformedBeamAmplitude.y,
+				x: tTransformedBeam.x,
+				y: amplitudeOfTabulatedValues(tTransformedBeam.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Fouriered"
 			}, {
-				x: tNumTransformedBeamAmplitude.x,
-				y: tNumTransformedBeamAmplitude.y,
+				x: tNumTransformedBeam.x,
+				y: amplitudeOfTabulatedValues(tNumTransformedBeam.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Numerically Integrated"
@@ -212,7 +194,7 @@ export class Lab2Component implements OnInit {
 			layout: {
 				xaxis: {
 					title: "x",
-					range: [tTransformedBeamAmplitude.x[0], tTransformedBeamAmplitude.x[tTransformedBeamAmplitude.x.length - 1]]
+					range: [tTransformedBeam.x[0], tTransformedBeam.x[tTransformedBeam.x.length - 1]]
 				},
 				yaxis: {
 					title: "abs(f(x))",
@@ -227,14 +209,14 @@ export class Lab2Component implements OnInit {
 
 		Plotly.newPlot("transformed-beam-phase-plot-2", {
 			data: [{
-				x: tTransformedBeamPhase.x,
-				y: tTransformedBeamPhase.y,
+				x: tTransformedBeam.x,
+				y: phaseOfTabulatedValues(tTransformedBeam.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Fouriered"
 			}, {
-				x: tNumTransformedBeamPhase.x,
-				y: tNumTransformedBeamPhase.y,
+				x: tNumTransformedBeam.x,
+				y: phaseOfTabulatedValues(tNumTransformedBeam.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Numerically Integrated"
@@ -242,7 +224,7 @@ export class Lab2Component implements OnInit {
 			layout: {
 				xaxis: {
 					title: "x",
-					range: [tTransformedBeamPhase.x[0], tTransformedBeamPhase.x[tTransformedBeamPhase.x.length - 1]]
+					range: [tTransformedBeam.x[0], tTransformedBeam.x[tTransformedBeam.x.length - 1]]
 				},
 				yaxis: {
 					title: "atan2(im(f(x)), re(f(x)))",
@@ -433,8 +415,10 @@ export class Lab2Component implements OnInit {
 	draw2dTransformedGaussianBeam() {
 		const tTransformed2dBeam = opticalFourierTransform2d(tabulate2dFunction(gaussianBeam2d, [-a, -a], [a, a], h), M);
 
-		// @ts-ignore
-		const tAnalyticallyTransformed2dBeam = tabulate2dFunction(transformedGaussianBeam2d, [tTransformed2dBeam.x[0], tTransformed2dBeam.y[0]],
+		const tAnalyticallyTransformed2dBeam = tabulate2dFunction(
+			transformedGaussianBeam2d,
+			// @ts-ignore
+			[tTransformed2dBeam.x[0], tTransformed2dBeam.y[0]],
 			[tTransformed2dBeam.x[tTransformed2dBeam.x.length - 1], tTransformed2dBeam.y[tTransformed2dBeam.y.length - 1]],
 			// @ts-ignore
 		2 * tTransformed2dBeam.x[tTransformed2dBeam.x.length - 1] / M)
@@ -476,10 +460,89 @@ export class Lab2Component implements OnInit {
 	}
 
 	draw2dCustomPlane() {
+		const tPlane2dAmplitude = tabulate2dFunction(amplitude2d(customPlane2d), [-a, -a], [a, a], h);
+		const tPlane2dPhase = tabulate2dFunction(phase2d(customPlane2d), [-a, -a], [a, a], h);
 
+		Plotly.newPlot("2d-plane-amplitude-plot-2", {
+			data: [{
+				x: tPlane2dAmplitude.x,
+				y: tPlane2dAmplitude.y,
+				z: tPlane2dAmplitude.z,
+				type: "surface"
+			}],
+			layout: {
+				title: '2D Input Plane Amplitude'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("2d-plane-phase-plot-2", {
+			data: [{
+				x: tPlane2dPhase.x,
+				y: tPlane2dPhase.y,
+				z: tPlane2dPhase.z,
+				type: "surface"
+			}],
+			layout: {
+				title: "2D Input Plane Phase"
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
 	}
 
 	draw2dTransformedCustomPlane() {
+		const tTransformed2dPlane = opticalFourierTransform2d(tabulate2dFunction(customPlane2d, [-a, -a], [a, a], h), M);
+		const tAnalyticallyTransformed2dPlane = tabulate2dFunction(
+			transformedCustomPlane2d,
+			// @ts-ignore
+			[tTransformed2dPlane.x[0], tTransformed2dPlane.y[0]],
+			[tTransformed2dPlane.x[tTransformed2dPlane.x.length - 1], tTransformed2dPlane.y[tTransformed2dPlane.y.length - 1]],
+			// @ts-ignore
+		2 * tTransformed2dPlane.x[tTransformed2dPlane.x.length - 1] / M
+		);
 
+		Plotly.newPlot("2d-transformed-plane-amplitude-plot-2", {
+			data: [{
+				x: tTransformed2dPlane.x,
+				y: tTransformed2dPlane.y,
+				z: amplitudeOfTabulated2dValues(tTransformed2dPlane.z),
+				type: "surface"
+			}, {
+				x: tAnalyticallyTransformed2dPlane.x,
+				y: tAnalyticallyTransformed2dPlane.y,
+				z: amplitudeOfTabulated2dValues(tAnalyticallyTransformed2dPlane.z),
+				type: "surface"
+			}],
+			layout: {
+				title: 'Transformed 2D Custom Plane Amplitude'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("2d-transformed-plane-phase-plot-2", {
+			data: [{
+				x: tTransformed2dPlane.x,
+				y: tTransformed2dPlane.y,
+				z: phaseOfTabulated2dValues(tTransformed2dPlane.z),
+				type: "surface"
+			},{
+				x: tAnalyticallyTransformed2dPlane.x,
+				y: tAnalyticallyTransformed2dPlane.y,
+				z: phaseOfTabulated2dValues(tAnalyticallyTransformed2dPlane.z),
+				type: "surface"
+			}],
+			layout: {
+				title: "Transformed 2D Custom Plane Phase"
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
 	}
 }
