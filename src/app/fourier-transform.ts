@@ -1,5 +1,5 @@
-import {add, complex, Complex, multiply, sqrt, subtract} from "mathjs";
-import {tabulateRange} from "./math-fns";
+import {add, complex, Complex, divide, multiply, subtract} from "mathjs";
+import {Tabulated2dFunction, tabulateRange} from "./math-fns";
 
 
 /**
@@ -7,11 +7,9 @@ import {tabulateRange} from "./math-fns";
  */
 function bitLength(number: number): number {
 	let bitsCounter = 0;
-
 	while ((1 << bitsCounter) <= number) {
 		bitsCounter += 1;
 	}
-
 	return bitsCounter;
 }
 
@@ -20,15 +18,12 @@ function bitLength(number: number): number {
  */
 function reverseBits(input: number, bitsCount: number): number {
 	let reversedBits = 0;
-
 	for (let bitIndex = 0; bitIndex < bitsCount; bitIndex += 1) {
 		reversedBits *= 2;
-
 		if (Math.floor(input / (1 << bitIndex)) % 2 === 1) {
 			reversedBits += 1;
 		}
 	}
-
 	return reversedBits;
 }
 
@@ -76,8 +71,7 @@ export function fastFourierTransform(inputData: Complex[], inverse: boolean = fa
 
 	if (inverse) {
 		for (let signalId = 0; signalId < N; signalId += 1) {
-			// @ts-ignore
-			output[signalId] /= N;
+			output[signalId] = <Complex>divide(output[signalId], N);
 		}
 	}
 
@@ -96,20 +90,48 @@ function swapHalfs(values) {
 export function opticalFourierTransform(tf, M) {
 	const N = tf.y.length;
 	const a = tf.x[tf.x.length - 1];
-	const h = 1 / (2 * a);
+	const h = 2 * a / (N - 1);
 	const b = N ** 2 / (4 * a * M);
 
-	let f = tf.y.map(val => complex(val, 0));
+	let f = tf.y.map(val => complex(val));
 	f = addZeros(f, M);
 	f = swapHalfs(f);
 
 	let F: Complex[] = fastFourierTransform(f);
 	F = swapHalfs(F);
 	F = F.slice(Math.floor((M - N) / 2), Math.ceil(M - (M - N) / 2))
-		.map(val => <Complex>multiply(val, h / sqrt(b)))
+		.map(val => <Complex>multiply(val, h));
 
 	return {
-		x: tabulateRange(-b, b, (2 * b) / F.length),
+		x: tabulateRange(-b, b, (2 * b) / (F.length - 1)),
 		y: F
 	}
+}
+
+export function opticalFourierTransform2d(tf2d, M): Tabulated2dFunction {
+
+	let resultTf2d = {
+		x: [],
+		y: tf2d.y,
+		z: []
+	}
+
+	for (let i = 0; i < tf2d.y.length; ++i) {
+		const transformed = opticalFourierTransform({x: tf2d.x, y: tf2d.z[i]}, M);
+		resultTf2d.x = transformed.x;
+		resultTf2d.z[i] = transformed.y;
+	}
+
+	for (let j = 0; j < resultTf2d.x.length; ++j) {
+		const input = {x: tf2d.y, y: resultTf2d.z.map(vector => vector[j])};
+		const transformed = opticalFourierTransform(input, M);
+
+		resultTf2d.y = transformed.x;
+
+		transformed.y.forEach((value, index) => {
+			resultTf2d.z[index][j] = value;
+		});
+	}
+
+	return resultTf2d;
 }

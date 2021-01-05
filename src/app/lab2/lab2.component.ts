@@ -1,15 +1,29 @@
 import {Component, OnInit} from '@angular/core';
 import {
 	amplitude,
+	amplitude2d,
+	amplitudeOfTabulated2dValues,
 	amplitudeOfTabulatedValues,
 	fourierIntegralFunction,
 	integrateByTrapezia,
 	phase,
+	phase2d,
+	phaseOfTabulated2dValues,
 	phaseOfTabulatedValues,
+	tabulate2dFunction,
 	tabulateFunction
 } from "../math-fns";
-import {opticalFourierTransform} from "../fourier-transform";
-import {a, customPlane, gaussianBeam, h, M, transformedCustomPlane} from "./lab2.data";
+import {opticalFourierTransform, opticalFourierTransform2d} from "../fourier-transform";
+import {
+	a,
+	customPlane,
+	gaussianBeam,
+	gaussianBeam2d,
+	h,
+	M,
+	transformedCustomPlane,
+	transformedGaussianBeam2d
+} from "./lab2.data";
 import Plotly from 'plotly.js-dist';
 
 
@@ -296,29 +310,9 @@ export class Lab2Component implements OnInit {
 	drawTransformedCustomPlane() {
 		const tTransformedPlane = opticalFourierTransform(tabulateFunction(customPlane, -a, a, h), M);
 
-		const tTransformedPlaneAmplitude = {
-			x: tTransformedPlane.x,
-			y: amplitudeOfTabulatedValues(tTransformedPlane.y)
-		};
-
-		const tTransformedPlanePhase = {
-			x: tTransformedPlane.x,
-			y: phaseOfTabulatedValues(tTransformedPlane.y)
-		};
-
 		const tNumTransformedPlane = {
 			x: tTransformedPlane.x,
 			y: tTransformedPlane.x.map(x => integrateByTrapezia(fourierIntegralFunction(customPlane, x), -a, a, h))
-		}
-
-		const tNumTransformedPlaneAmplitude = {
-			x: tTransformedPlane.x,
-			y: amplitudeOfTabulatedValues(tNumTransformedPlane.y)
-		}
-
-		const tNumTransformedPlanePhase = {
-			x: tTransformedPlane.x,
-			y: phaseOfTabulatedValues(tNumTransformedPlane.y)
 		}
 
 		const tAnalyticallyTransformedPlane = tabulateFunction(
@@ -328,32 +322,22 @@ export class Lab2Component implements OnInit {
 			2 * tTransformedPlane.x[tTransformedPlane.x.length - 1] / M
 		);
 
-		const tAnalyticallyTransformedPlaneAmplitude = {
-			x: tAnalyticallyTransformedPlane.x,
-			y: amplitudeOfTabulatedValues(tAnalyticallyTransformedPlane.y)
-		}
-
-		const tAnalyticallyTransformedPlanePhase = {
-			x: tAnalyticallyTransformedPlane.x,
-			y: phaseOfTabulatedValues(tAnalyticallyTransformedPlane.y)
-		}
-
 		Plotly.newPlot("transformed-plane-amplitude-plot-2", {
 			data: [{
-				x: tTransformedPlaneAmplitude.x,
-				y: tTransformedPlaneAmplitude.y,
+				x: tTransformedPlane.x,
+				y: amplitudeOfTabulatedValues(tTransformedPlane.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Fouriered"
 			}, {
-				x: tNumTransformedPlaneAmplitude.x,
-				y: tNumTransformedPlaneAmplitude.y,
+				x: tNumTransformedPlane.x,
+				y: amplitudeOfTabulatedValues(tNumTransformedPlane.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Numerically Integrated"
 			}, {
-				x: tAnalyticallyTransformedPlaneAmplitude.x,
-				y: tAnalyticallyTransformedPlaneAmplitude.y,
+				x: tAnalyticallyTransformedPlane.x,
+				y: amplitudeOfTabulatedValues(tAnalyticallyTransformedPlane.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Analytically"
@@ -376,20 +360,20 @@ export class Lab2Component implements OnInit {
 
 		Plotly.newPlot("transformed-plane-phase-plot-2", {
 			data: [{
-				x: tTransformedPlanePhase.x,
-				y: tTransformedPlanePhase.y,
+				x: tTransformedPlane.x,
+				y: phaseOfTabulatedValues(tTransformedPlane.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Fouriered"
 			}, {
-				x: tNumTransformedPlanePhase.x,
-				y: tNumTransformedPlanePhase.y,
+				x: tNumTransformedPlane.x,
+				y: phaseOfTabulatedValues(tNumTransformedPlane.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Numerically Integrated"
 			}, {
-				x: tAnalyticallyTransformedPlanePhase.x,
-				y: tAnalyticallyTransformedPlanePhase.y,
+				x: tAnalyticallyTransformedPlane.x,
+				y: phaseOfTabulatedValues(tAnalyticallyTransformedPlane.y),
 				mode: 'lines',
 				type: 'scatter',
 				name: "Analytically"
@@ -412,11 +396,83 @@ export class Lab2Component implements OnInit {
 	}
 
 	draw2dGaussianBeam() {
+		const tBeam2dAmplitude = tabulate2dFunction(amplitude2d(gaussianBeam2d), [-a, -a], [a, a], h);
+		const tBeam2dPhase = tabulate2dFunction(phase2d(gaussianBeam2d), [-a, -a], [a, a], h);
 
+		Plotly.newPlot("2d-beam-amplitude-plot-2", {
+			data: [{
+				x: tBeam2dAmplitude.x,
+				y: tBeam2dAmplitude.y,
+				z: tBeam2dAmplitude.z,
+				type: "surface"
+			}],
+			layout: {
+				title: '2D Gaussian Beam Amplitude'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("2d-beam-phase-plot-2", {
+			data: [{
+				x: tBeam2dPhase.x,
+				y: tBeam2dPhase.y,
+				z: tBeam2dPhase.z,
+				type: "surface"
+			}],
+			layout: {
+				title: "2D Gaussian Beam Phase"
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
 	}
 
 	draw2dTransformedGaussianBeam() {
+		const tTransformed2dBeam = opticalFourierTransform2d(tabulate2dFunction(gaussianBeam2d, [-a, -a], [a, a], h), M);
 
+		// @ts-ignore
+		const tAnalyticallyTransformed2dBeam = tabulate2dFunction(transformedGaussianBeam2d, [tTransformed2dBeam.x[0], tTransformed2dBeam.y[0]],
+			[tTransformed2dBeam.x[tTransformed2dBeam.x.length - 1], tTransformed2dBeam.y[tTransformed2dBeam.y.length - 1]],
+			// @ts-ignore
+		2 * tTransformed2dBeam.x[tTransformed2dBeam.x.length - 1] / M)
+
+		Plotly.newPlot("2d-transformed-beam-amplitude-plot-2", {
+			data: [{
+				x: tTransformed2dBeam.x,
+				y: tTransformed2dBeam.y,
+				z: amplitudeOfTabulated2dValues(tTransformed2dBeam.z),
+				type: "surface"
+			}, /*{
+				x: tAnalyticallyTransformed2dBeam.x,
+				y: tAnalyticallyTransformed2dBeam.y,
+				z: tAnalyticallyTransformed2dBeam.z,
+				type: "surface"
+			}*/],
+			layout: {
+				title: 'Transformed 2D Gaussian Beam Amplitude'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("2d-transformed-beam-phase-plot-2", {
+			data: [{
+				x: tTransformed2dBeam.x,
+				y: tTransformed2dBeam.y,
+				z: phaseOfTabulated2dValues(tTransformed2dBeam.z),
+				type: "surface"
+			}],
+			layout: {
+				title: "Transformed 2D Gaussian Beam Phase"
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
 	}
 
 	draw2dCustomPlane() {

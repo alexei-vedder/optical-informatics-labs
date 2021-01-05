@@ -5,17 +5,22 @@ export interface TabulatedFunction {
 	y: number[] | Complex[];
 }
 
+export interface Tabulated2dFunction {
+	x: number[] | Complex[];
+	y: number[] | Complex[];
+	z: (number | Complex)[][];
+}
+
 export function tabulateRange(from: number, to: number, step: number): number[] {
 	if (to < from) {
 		throw new Error("param 'from' should be less than param 'to'");
 	}
-
 	const tabulation: number[] = [];
-	for (let xCurrent = from; xCurrent < to; xCurrent += step) {
+	let xCurrent = from;
+	while (xCurrent <= to + step / 2) {
 		tabulation.push(xCurrent);
+		xCurrent += step;
 	}
-
-	tabulation.push(to);
 	return tabulation;
 }
 
@@ -25,7 +30,7 @@ export function integrateByTrapezia(func: (x: number) => number, from: number, t
 
 	for (let i = 0; i < x.length - 1; ++i) {
 		const sumPart = multiply(add(func(x[i]), func(x[i + 1])), (x[i + 1] - x[i]) / 2);
-		solution = <number | Complex> add(solution, sumPart);
+		solution = <number | Complex>add(solution, sumPart);
 	}
 
 	return solution;
@@ -54,17 +59,31 @@ export function integrateByNewtonLeibniz(antiderivative: (x: number) => number, 
 }
 
 export function tabulateFunction(f: (x: number) => number, from: number, to: number, step: number): TabulatedFunction {
-	if (to < from) {
+
+	const tf = {
+		x: tabulateRange(from, to, step),
+		y: []
+	};
+
+	tf.x.forEach(x => tf.y.push(f(x)));
+
+	return tf;
+}
+
+export function tabulate2dFunction(f: (x: number, y: number) => number, from: [number, number], to: [number, number], step: number): Tabulated2dFunction {
+	if (to[0] < from[0] || to[1] < from[1]) {
 		throw new Error("param 'from' should be less than param 'to'");
 	}
-	let xCurrent = from;
-	const tfunc = {x: [], y: []};
-	while (xCurrent <= to + step / 2) {
-		tfunc.x.push(xCurrent);
-		tfunc.y.push(f(xCurrent));
-		xCurrent += step;
+	let yCurrent = from[1];
+	const tf2d = {x: [], y: [], z: []};
+	while (yCurrent <= to[1] + step / 2) {
+		const tf = tabulateFunction(x => f(x, yCurrent), from[0], to[0], step);
+		tf2d.x = tf.x;
+		tf2d.y.push(yCurrent);
+		tf2d.z.push(tf.y);
+		yCurrent += step;
 	}
-	return tfunc;
+	return tf2d;
 }
 
 export const rect = (x: number) => {
@@ -80,6 +99,10 @@ export const amplitude = f => x => <number>abs(f(x));
 
 export const phase = f => x => atan2(<number>im(f(x)), <number>re(f(x)));
 
+export const amplitude2d = f => (x, y) => <number>abs(f(x, y));
+
+export const phase2d = f => (x, y) => atan2(<number>im(f(x, y)), <number>re(f(x, y)));
+
 export const fourierIntegralFunction = (f, u) => x => multiply(f(x), exp(<number>multiply(-2 * pi * x * u, complex(0, 1))));
 
 export function amplitudeOfTabulatedValues(values: any[]): any[] {
@@ -88,4 +111,12 @@ export function amplitudeOfTabulatedValues(values: any[]): any[] {
 
 export function phaseOfTabulatedValues(values: any[]): any[] {
 	return values.map(val => atan2(<number>im(val), <number>re(val)));
+}
+
+export function amplitudeOfTabulated2dValues(values: any[][]): any[][] {
+	return values.map(vector => vector.map(val => abs(val)));
+}
+
+export function phaseOfTabulated2dValues(values: any[][]): any[][] {
+	return values.map(vector => vector.map(val => atan2(<number>im(val), <number>re(val))));
 }
