@@ -76,12 +76,16 @@ export const rect = (x: number) => {
 		return 1;
 }
 
+export const amplitude = f => x => <number>abs(f(x));
+
+export const phase = f => x => atan2(<number>im(f(x)), <number>re(f(x)));
+
 export const fourierIntegralFunction = (f, u) => x => multiply(f(x), exp(<number>multiply(-2 * pi * x * u, complex(0, 1))));
 
-export function amplitudeOf(values: any[]): any[] {
+export function amplitudeOfTabulatedValues(values: any[]): any[] {
 	return values.map(val => abs(val));
 }
 
-export function phaseOf(values: any[]): any[] {
+export function phaseOfTabulatedValues(values: any[]): any[] {
 	return values.map(val => atan2(<number>im(val), <number>re(val)));
 }

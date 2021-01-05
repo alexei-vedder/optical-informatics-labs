@@ -1,7 +1,15 @@
 import {Component, OnInit} from '@angular/core';
-import {amplitudeOf, fourierIntegralFunction, integrateByTrapezia, phaseOf, tabulateFunction} from "../math-fns";
+import {
+	amplitude,
+	amplitudeOfTabulatedValues,
+	fourierIntegralFunction,
+	integrateByTrapezia,
+	phase,
+	phaseOfTabulatedValues,
+	tabulateFunction
+} from "../math-fns";
 import {opticalFourierTransform} from "../fourier-transform";
-import {a, amplitude, customPlane, gaussianBeam, h, M, phase, transformedCustomPlane} from "./lab2.data";
+import {a, customPlane, gaussianBeam, h, M, transformedCustomPlane} from "./lab2.data";
 import Plotly from 'plotly.js-dist';
 
 
@@ -17,7 +25,6 @@ import Plotly from 'plotly.js-dist';
 					<div id="transformed-beam-amplitude-plot-2" class="plot-container"></div>
 					<div id="transformed-beam-phase-plot-2" class="plot-container"></div>
 				</div>
-
 			</mat-tab>
 			<mat-tab label="Custom Input Plane">
 				<div class="container">
@@ -26,6 +33,24 @@ import Plotly from 'plotly.js-dist';
 
 					<div id="transformed-plane-amplitude-plot-2" class="plot-container"></div>
 					<div id="transformed-plane-phase-plot-2" class="plot-container"></div>
+				</div>
+			</mat-tab>
+			<mat-tab label="2D Gaussian Beam">
+				<div class="container">
+					<div id="2d-beam-amplitude-plot-2" class="plot-container"></div>
+					<div id="2d-beam-phase-plot-2" class="plot-container"></div>
+
+					<div id="2d-transformed-beam-amplitude-plot-2" class="plot-container"></div>
+					<div id="2d-transformed-beam-phase-plot-2" class="plot-container"></div>
+				</div>
+			</mat-tab>
+			<mat-tab label="2D Custom Input Plane">
+				<div class="container">
+					<div id="2d-plane-amplitude-plot-2" class="plot-container"></div>
+					<div id="2d-plane-phase-plot-2" class="plot-container"></div>
+
+					<div id="2d-transformed-plane-amplitude-plot-2" class="plot-container"></div>
+					<div id="2d-transformed-plane-phase-plot-2" class="plot-container"></div>
 				</div>
 			</mat-tab>
 		</mat-tab-group>
@@ -53,6 +78,20 @@ export class Lab2Component implements OnInit {
 				setTimeout(() => {
 					this.drawCustomPlane();
 					this.drawTransformedCustomPlane();
+				});
+				break;
+			}
+			case 2: {
+				setTimeout(() => {
+					this.draw2dGaussianBeam();
+					this.draw2dTransformedGaussianBeam();
+				});
+				break;
+			}
+			case 3: {
+				setTimeout(() => {
+					this.draw2dCustomPlane();
+					this.draw2dTransformedCustomPlane();
 				});
 				break;
 			}
@@ -119,12 +158,12 @@ export class Lab2Component implements OnInit {
 
 		const tTransformedBeamAmplitude = {
 			x: tTransformedBeam.x,
-			y: amplitudeOf(tTransformedBeam.y)
+			y: amplitudeOfTabulatedValues(tTransformedBeam.y)
 		};
 
 		const tTransformedBeamPhase = {
 			x: tTransformedBeam.x,
-			y: phaseOf(tTransformedBeam.y)
+			y: phaseOfTabulatedValues(tTransformedBeam.y)
 		};
 
 		const tNumTransformedBeam = {
@@ -134,12 +173,12 @@ export class Lab2Component implements OnInit {
 
 		const tNumTransformedBeamAmplitude = {
 			x: tTransformedBeam.x,
-			y: amplitudeOf(tNumTransformedBeam.y)
+			y: amplitudeOfTabulatedValues(tNumTransformedBeam.y)
 		}
 
 		const tNumTransformedBeamPhase = {
 			x: tTransformedBeam.x,
-			y: phaseOf(tNumTransformedBeam.y)
+			y: phaseOfTabulatedValues(tNumTransformedBeam.y)
 		}
 
 		Plotly.newPlot("transformed-beam-amplitude-plot-2", {
@@ -259,12 +298,12 @@ export class Lab2Component implements OnInit {
 
 		const tTransformedPlaneAmplitude = {
 			x: tTransformedPlane.x,
-			y: amplitudeOf(tTransformedPlane.y)
+			y: amplitudeOfTabulatedValues(tTransformedPlane.y)
 		};
 
 		const tTransformedPlanePhase = {
 			x: tTransformedPlane.x,
-			y: phaseOf(tTransformedPlane.y)
+			y: phaseOfTabulatedValues(tTransformedPlane.y)
 		};
 
 		const tNumTransformedPlane = {
@@ -274,12 +313,12 @@ export class Lab2Component implements OnInit {
 
 		const tNumTransformedPlaneAmplitude = {
 			x: tTransformedPlane.x,
-			y: amplitudeOf(tNumTransformedPlane.y)
+			y: amplitudeOfTabulatedValues(tNumTransformedPlane.y)
 		}
 
 		const tNumTransformedPlanePhase = {
 			x: tTransformedPlane.x,
-			y: phaseOf(tNumTransformedPlane.y)
+			y: phaseOfTabulatedValues(tNumTransformedPlane.y)
 		}
 
 		const tAnalyticallyTransformedPlane = tabulateFunction(
@@ -291,12 +330,12 @@ export class Lab2Component implements OnInit {
 
 		const tAnalyticallyTransformedPlaneAmplitude = {
 			x: tAnalyticallyTransformedPlane.x,
-			y: amplitudeOf(tAnalyticallyTransformedPlane.y)
+			y: amplitudeOfTabulatedValues(tAnalyticallyTransformedPlane.y)
 		}
 
 		const tAnalyticallyTransformedPlanePhase = {
 			x: tAnalyticallyTransformedPlane.x,
-			y: phaseOf(tAnalyticallyTransformedPlane.y)
+			y: phaseOfTabulatedValues(tAnalyticallyTransformedPlane.y)
 		}
 
 		Plotly.newPlot("transformed-plane-amplitude-plot-2", {
@@ -370,5 +409,21 @@ export class Lab2Component implements OnInit {
 				scrollZoom: true
 			}
 		});
+	}
+
+	draw2dGaussianBeam() {
+
+	}
+
+	draw2dTransformedGaussianBeam() {
+
+	}
+
+	draw2dCustomPlane() {
+
+	}
+
+	draw2dTransformedCustomPlane() {
+
 	}
 }
