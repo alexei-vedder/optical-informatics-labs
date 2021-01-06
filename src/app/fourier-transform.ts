@@ -1,7 +1,6 @@
 import {add, complex, Complex, divide, multiply, subtract} from "mathjs";
 import {Tabulated2dFunction, tabulateRange} from "./math-fns";
 
-
 /**
  * Return the number of bits used in the binary representation of the number.
  */
@@ -112,9 +111,9 @@ export function opticalFourierTransform2d(tf2d, M): Tabulated2dFunction {
 
 	let resultTf2d = {
 		x: [],
-		y: tf2d.y,
+		y: [],
 		z: []
-	}
+	};
 
 	for (let i = 0; i < tf2d.y.length; ++i) {
 		const transformed = opticalFourierTransform({x: tf2d.x, y: tf2d.z[i]}, M);
@@ -123,11 +122,8 @@ export function opticalFourierTransform2d(tf2d, M): Tabulated2dFunction {
 	}
 
 	for (let j = 0; j < resultTf2d.x.length; ++j) {
-		const input = {x: tf2d.y, y: resultTf2d.z.map(vector => vector[j])};
-		const transformed = opticalFourierTransform(input, M);
-
+		const transformed = opticalFourierTransform({x: tf2d.y, y: resultTf2d.z.map(vector => vector[j])}, M);
 		resultTf2d.y = transformed.x;
-
 		transformed.y.forEach((value, index) => {
 			resultTf2d.z[index][j] = value;
 		});

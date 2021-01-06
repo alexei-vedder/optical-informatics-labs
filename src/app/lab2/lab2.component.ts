@@ -24,7 +24,6 @@ import {
 	M,
 	transformedCustomPlane,
 	transformedCustomPlane2d,
-	transformedGaussianBeam2d
 } from "./lab2.data";
 import Plotly from 'plotly.js-dist';
 
@@ -415,14 +414,6 @@ export class Lab2Component implements OnInit {
 	draw2dTransformedGaussianBeam() {
 		const tTransformed2dBeam = opticalFourierTransform2d(tabulate2dFunction(gaussianBeam2d, [-a, -a], [a, a], h), M);
 
-		const tAnalyticallyTransformed2dBeam = tabulate2dFunction(
-			transformedGaussianBeam2d,
-			// @ts-ignore
-			[tTransformed2dBeam.x[0], tTransformed2dBeam.y[0]],
-			[tTransformed2dBeam.x[tTransformed2dBeam.x.length - 1], tTransformed2dBeam.y[tTransformed2dBeam.y.length - 1]],
-			// @ts-ignore
-		2 * tTransformed2dBeam.x[tTransformed2dBeam.x.length - 1] / M)
-
 		Plotly.newPlot("2d-transformed-beam-amplitude-plot-2", {
 			data: [{
 				x: tTransformed2dBeam.x,
@@ -502,7 +493,7 @@ export class Lab2Component implements OnInit {
 			[tTransformed2dPlane.x[0], tTransformed2dPlane.y[0]],
 			[tTransformed2dPlane.x[tTransformed2dPlane.x.length - 1], tTransformed2dPlane.y[tTransformed2dPlane.y.length - 1]],
 			// @ts-ignore
-		2 * tTransformed2dPlane.x[tTransformed2dPlane.x.length - 1] / M
+			2 * tTransformed2dPlane.x[tTransformed2dPlane.x.length - 1] / M
 		);
 
 		Plotly.newPlot("2d-transformed-plane-amplitude-plot-2", {
@@ -510,12 +501,16 @@ export class Lab2Component implements OnInit {
 				x: tTransformed2dPlane.x,
 				y: tTransformed2dPlane.y,
 				z: amplitudeOfTabulated2dValues(tTransformed2dPlane.z),
-				type: "surface"
+				type: "surface",
+				colorscale: "Greys",
+				opacity: 0.5,
 			}, {
 				x: tAnalyticallyTransformed2dPlane.x,
 				y: tAnalyticallyTransformed2dPlane.y,
 				z: amplitudeOfTabulated2dValues(tAnalyticallyTransformed2dPlane.z),
-				type: "surface"
+				type: "surface",
+				colorscale: 'Jet',
+				opacity: 0.5,
 			}],
 			layout: {
 				title: 'Transformed 2D Custom Plane Amplitude'
@@ -530,12 +525,16 @@ export class Lab2Component implements OnInit {
 				x: tTransformed2dPlane.x,
 				y: tTransformed2dPlane.y,
 				z: phaseOfTabulated2dValues(tTransformed2dPlane.z),
-				type: "surface"
-			},{
+				type: "surface",
+				colorscale: "Greys",
+				opacity: 0.5,
+			}, {
 				x: tAnalyticallyTransformed2dPlane.x,
 				y: tAnalyticallyTransformed2dPlane.y,
 				z: phaseOfTabulated2dValues(tAnalyticallyTransformed2dPlane.z),
-				type: "surface"
+				type: "surface",
+				colorscale: 'Jet',
+				opacity: 0.5,
 			}],
 			layout: {
 				title: "Transformed 2D Custom Plane Phase"
