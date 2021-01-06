@@ -65,7 +65,10 @@ import Plotly from 'plotly.js-dist';
 					<div id="2d-plane-phase-plot-2" class="plot-container"></div>
 
 					<div id="2d-transformed-plane-amplitude-plot-2" class="plot-container"></div>
+					<div id="2d-analytically-transformed-plane-amplitude-plot-2" class="plot-container"></div>
+
 					<div id="2d-transformed-plane-phase-plot-2" class="plot-container"></div>
+					<div id="2d-analytically-transformed-plane-phase-plot-2" class="plot-container"></div>
 				</div>
 			</mat-tab>
 		</mat-tab-group>
@@ -419,13 +422,9 @@ export class Lab2Component implements OnInit {
 				x: tTransformed2dBeam.x,
 				y: tTransformed2dBeam.y,
 				z: amplitudeOfTabulated2dValues(tTransformed2dBeam.z),
-				type: "surface"
-			}, /*{
-				x: tAnalyticallyTransformed2dBeam.x,
-				y: tAnalyticallyTransformed2dBeam.y,
-				z: tAnalyticallyTransformed2dBeam.z,
-				type: "surface"
-			}*/],
+				type: "surface",
+				colorscale: "Jet",
+			}],
 			layout: {
 				title: 'Transformed 2D Gaussian Beam Amplitude'
 			},
@@ -439,7 +438,8 @@ export class Lab2Component implements OnInit {
 				x: tTransformed2dBeam.x,
 				y: tTransformed2dBeam.y,
 				z: phaseOfTabulated2dValues(tTransformed2dBeam.z),
-				type: "surface"
+				type: "surface",
+				colorscale: "Jet",
 			}],
 			layout: {
 				title: "Transformed 2D Gaussian Beam Phase"
@@ -487,6 +487,7 @@ export class Lab2Component implements OnInit {
 
 	draw2dTransformedCustomPlane() {
 		const tTransformed2dPlane = opticalFourierTransform2d(tabulate2dFunction(customPlane2d, [-a, -a], [a, a], h), M);
+
 		const tAnalyticallyTransformed2dPlane = tabulate2dFunction(
 			transformedCustomPlane2d,
 			// @ts-ignore
@@ -502,18 +503,26 @@ export class Lab2Component implements OnInit {
 				y: tTransformed2dPlane.y,
 				z: amplitudeOfTabulated2dValues(tTransformed2dPlane.z),
 				type: "surface",
-				colorscale: "Greys",
-				opacity: 0.5,
-			}, {
+				colorscale: "Jet",
+			}],
+			layout: {
+				title: 'Transformed 2D Custom Plane Amplitude'
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("2d-analytically-transformed-plane-amplitude-plot-2", {
+			data: [{
 				x: tAnalyticallyTransformed2dPlane.x,
 				y: tAnalyticallyTransformed2dPlane.y,
 				z: amplitudeOfTabulated2dValues(tAnalyticallyTransformed2dPlane.z),
 				type: "surface",
-				colorscale: 'Jet',
-				opacity: 0.5,
+				colorscale: 'YlGnBu',
 			}],
 			layout: {
-				title: 'Transformed 2D Custom Plane Amplitude'
+				title: 'Analytically Transformed 2D Custom Plane Amplitude'
 			},
 			config: {
 				scrollZoom: true
@@ -526,18 +535,26 @@ export class Lab2Component implements OnInit {
 				y: tTransformed2dPlane.y,
 				z: phaseOfTabulated2dValues(tTransformed2dPlane.z),
 				type: "surface",
-				colorscale: "Greys",
-				opacity: 0.5,
-			}, {
+				colorscale: "Jet",
+			}],
+			layout: {
+				title: "Transformed 2D Custom Plane Phase"
+			},
+			config: {
+				scrollZoom: true
+			}
+		});
+
+		Plotly.newPlot("2d-analytically-transformed-plane-phase-plot-2", {
+			data: [{
 				x: tAnalyticallyTransformed2dPlane.x,
 				y: tAnalyticallyTransformed2dPlane.y,
 				z: phaseOfTabulated2dValues(tAnalyticallyTransformed2dPlane.z),
 				type: "surface",
-				colorscale: 'Jet',
-				opacity: 0.5,
+				colorscale: 'YlGnBu',
 			}],
 			layout: {
-				title: "Transformed 2D Custom Plane Phase"
+				title: "Analytically Transformed 2D Custom Plane Phase"
 			},
 			config: {
 				scrollZoom: true

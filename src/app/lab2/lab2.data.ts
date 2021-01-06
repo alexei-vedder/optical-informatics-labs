@@ -18,7 +18,7 @@ const p = 1;
 export const gaussianBeam = x => exp(multiply(-s, square(x)));
 export const gaussianBeam2d = (x, y) => exp(<number>add(multiply(-s, square(x)), multiply(-p, square(y))));
 
-export const N = 200;
+export const N = 194;
 export const M = 2 ** 10;
 export const a = 5;
 export const h = 2 * a / (N - 1);
