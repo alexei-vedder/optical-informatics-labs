@@ -25,6 +25,11 @@ export class AppComponent {
 			label: "Lab 2",
 			link: "./lab2",
 			index: 2
+		},
+		{
+			label: "Lab 3",
+			link: "./lab3",
+			index: 3
 		}
 	];
 }
