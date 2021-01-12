@@ -24,7 +24,7 @@ export function tabulateRange(from: number, to: number, step: number): number[] 
 	return tabulation;
 }
 
-export function integrateByTrapezia(func: (x: number) => number, from: number, to: number, step: number): number | Complex {
+export function integrateByTrapezia(func: (x: number) => number | Complex, from: number, to: number, step: number): number | Complex {
 	const x: number[] = tabulateRange(from, to, step);
 	let solution: number | Complex = 0;
 
