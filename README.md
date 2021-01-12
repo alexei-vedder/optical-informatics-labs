@@ -14,3 +14,8 @@ The crucial code of the lab is presented in the following files:
 * [lab2.component](src/app/lab2/lab2.component.ts)
 * [lab2.data](src/app/lab2/lab2.data.ts)
 * [fourier-transform](src/app/fourier-transform.ts)
+
+### Lab 3
+
+The crucial code of the lab is presented in the following files:
+* [lab3.component](src/app/lab3/lab3.component.ts)
